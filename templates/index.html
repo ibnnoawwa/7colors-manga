@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ manga.title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">{{ manga.title }}</span>
+      </div>
+      <p class="tagline">{{ manga.tagline }}</p>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <section class="hero">
+        <div class="hero-layout">
+          <div class="hero-cover-wrap">
+            {% if has_manga_cover %}
+              <img src="{{ url_for('manga_image', filepath=manga_cover_file) }}" alt="Cover" class="hero-cover-img">
+            {% else %}
+              <div class="hero-cover-placeholder">
+                <span class="placeholder-icon">&#9670;</span>
+              </div>
+            {% endif %}
+          </div>
+          <div class="hero-text">
+            <h1 class="hero-title">{{ manga.title }}</h1>
+            <p class="hero-sub">{{ manga.tagline }}</p>
+            <div class="hero-meta">
+              <span class="hero-badge">{{ chapters|length }} chapter{% if chapters|length != 1 %}s{% endif %}</span>
+            </div>
+            {% if chapters %}
+            <a href="{{ url_for('reader', chapter_key=chapters[0].key) }}" class="read-btn">
+              Start reading &#8594;
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <section class="chapters">
+        <h2 class="section-title">Chapters</h2>
+        {% if chapters %}
+          <div class="chapter-list">
+            {% for ch in chapters %}
+            <a href="{{ url_for('reader', chapter_key=ch.key) }}" class="chapter-card">
+              <div class="chapter-cover">
+                {% if ch.has_cover %}
+                  <img src="{{ url_for('manga_image', filepath=ch.key + '/' + ch.cover_file) }}" alt="Cover ch{{ loop.index }}" class="chapter-cover-img">
+                {% else %}
+                  <span class="chapter-num">CH</span>
+                  <span class="chapter-num-big">{{ loop.index }}</span>
+                {% endif %}
+              </div>
+              <div class="chapter-info">
+                <div class="chapter-title">{{ ch.title }}</div>
+                <div class="chapter-subtitle">{{ ch.subtitle }}</div>
+                <div class="chapter-meta">{{ ch.pages }} pages</div>
+              </div>
+              <div class="chapter-arrow">&#8594;</div>
+            </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="empty-msg">No chapters yet. Add images to the manga/ folder.</p>
+        {% endif %}
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© {{ manga.title }} — All rights reserved</p>
+  </footer>
+</body>
+</html>

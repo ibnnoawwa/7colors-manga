@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ chapter.subtitle }} — 7 Colors of Souls</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="reader-body">
+
+  <div class="reader-topbar">
+    <a href="{{ url_for('index') }}" class="back-link">&#8592; 7 Colors of Souls</a>
+    <div class="chapter-label">
+      <span class="chapter-label-title">{{ chapter.title }}</span>
+      <span class="chapter-label-sub">{{ chapter.subtitle }}</span>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-page" onclick="setMode('page')">Page</button>
+      <button class="mode-btn" id="btn-scroll" onclick="setMode('scroll')">Scroll</button>
+    </div>
+  </div>
+
+  <div id="mode-page" class="page-mode">
+    <div class="page-viewer">
+      {% if has_cover %}
+      <div class="page-slide active" data-index="0">
+        <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + cover_file) }}" alt="Cover" class="page-img">
+      </div>
+      {% endif %}
+      {% for page in pages %}
+      <div class="page-slide {% if not has_cover and loop.first %}active{% endif %}" data-index="{{ loop.index0 + (1 if has_cover else 0) }}">
+        <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + page) }}" alt="Page {{ loop.index }}" class="page-img">
+      </div>
+      {% endfor %}
+    </div>
+    <div class="page-controls">
+      <button class="ctrl-btn" id="btn-prev" onclick="changePage(-1)" disabled>&#8592; Prev</button>
+      <span class="page-counter"><span id="current-page">1</span> / <span id="total-pages"></span></span>
+      <button class="ctrl-btn" id="btn-next" onclick="changePage(1)">Next &#8594;</button>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <div id="mode-scroll" class="scroll-mode hidden">
+    {% if has_cover %}
+    <div class="scroll-page">
+      <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + cover_file) }}" alt="Cover" class="scroll-img">
+    </div>
+    {% endif %}
+    {% for page in pages %}
+    <div class="scroll-page">
+      <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + page) }}" alt="Page {{ loop.index }}" class="scroll-img">
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="chapter-nav">
+    {% if prev_chapter %}
+    <a href="{{ url_for('reader', chapter_key=prev_chapter) }}" class="chap-nav-btn">&#8592; Previous chapter</a>
+    {% else %}
+    <span class="chap-nav-btn disabled">&#8592; Previous chapter</span>
+    {% endif %}
+    <a href="{{ url_for('index') }}" class="chap-nav-btn home-btn">All chapters</a>
+    {% if next_chapter %}
+    <a href="{{ url_for('reader', chapter_key=next_chapter) }}" class="chap-nav-btn">Next chapter &#8594;</a>
+    {% else %}
+    <span class="chap-nav-btn disabled">Next chapter &#8594;</span>
+    {% endif %}
+  </div>
+
+  <script>
+    let currentPage = 0;
+    const slides = document.querySelectorAll('.page-slide');
+    const total = slides.length;
+    document.getElementById('total-pages').textContent = total;
+
+    function showPage(n) {
+      slides.forEach(s => s.classList.remove('active'));
+      slides[n].classList.add('active');
+      document.getElementById('current-page').textContent = n + 1;
+      document.getElementById('btn-prev').disabled = n === 0;
+      document.getElementById('btn-next').disabled = n === total - 1;
+      document.getElementById('progress-fill').style.width = ((n + 1) / total * 100).toFixed(1) + '%';
+      currentPage = n;
+      window.scrollTo(0, 0);
+    }
+    showPage(0);
+
+    function changePage(dir) {
+      const next = currentPage + dir;
+      if (next >= 0 && next < total) showPage(next);
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changePage(1);
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changePage(-1);
+    });
+
+    function setMode(mode) {
+      const pageDom = document.getElementById('mode-page');
+      const scrollDom = document.getElementById('mode-scroll');
+      if (mode === 'page') {
+        pageDom.classList.remove('hidden');
+        scrollDom.classList.add('hidden');
+        document.getElementById('btn-page').classList.add('active');
+        document.getElementById('btn-scroll').classList.remove('active');
+      } else {
+        pageDom.classList.add('hidden');
+        scrollDom.classList.remove('hidden');
+        document.getElementById('btn-scroll').classList.add('active');
+        document.getElementById('btn-page').classList.remove('active');
+        window.scrollTo(0, 0);
+      }
+    }
+  </script>
+</body>
+</html>
