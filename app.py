@@ -15,7 +15,12 @@ CHAPTERS = {
         'title': 'When the Journey Calls',
         'subtitle': 'Chapter 1 — The Beginning',
         'folder': 'chapter_1',
-    }
+    },
+    'chapter_2': {
+        'title': 'The road to Sidi mzal',
+        'subtitle': 'Chapter 2 — The Beginning',
+        'folder': 'chapter_2',
+    },
 }
 
 COVER_NAMES = ['cover', 'cover.jpg', 'cover.jpeg', 'cover.png', 'cover.webp']
