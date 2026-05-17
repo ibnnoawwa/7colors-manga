@@ -351,3 +351,43 @@ a { text-decoration: none; color: inherit; }
   .hero-layout { flex-direction: column; gap: 20px; }
   .hero-cover-wrap, .hero-cover-img { width: 140px; }
 }
+
+/* ── LIKES ── */
+.chapter-card-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  transition: border-color 0.15s;
+}
+.chapter-card-wrap:hover { border-color: var(--accent); }
+.chapter-card-wrap .chapter-card {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+.chapter-card-wrap .chapter-card:hover { background: transparent; }
+.like-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  min-width: 64px;
+}
+.like-btn:hover { background: var(--bg3); }
+.like-btn.liked .like-icon { color: #e05a22; }
+.like-btn:disabled { cursor: default; }
+.like-icon { font-size: 20px; color: var(--text3); transition: color 0.2s, transform 0.15s; }
+.like-btn:not(.liked):hover .like-icon { color: #e05a22; transform: scale(1.2); }
+.like-count { font-size: 12px; color: var(--text2); }

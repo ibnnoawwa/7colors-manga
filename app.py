@@ -1,9 +1,11 @@
-from flask import Flask, render_template, abort, send_from_directory
+from flask import Flask, render_template, abort, send_from_directory, jsonify, request
 import os
+import json
 
 app = Flask(__name__)
 
 MANGA_DIR = os.path.join(os.path.dirname(__file__), 'manga')
+LIKES_FILE = os.path.join(os.path.dirname(__file__), 'likes.json')
 
 MANGA_INFO = {
     'title': '7 Colors of Souls',
@@ -23,7 +25,7 @@ CHAPTERS = {
     },
     'chapter_3': {
         'title': 'The First Road',
-        'subtitle': 'Chapter 3 - The First Road',
+        'subtitle': 'Chapter 3 — The First Road',
         'folder': 'chapter_3',
     },
 }
@@ -63,8 +65,19 @@ def get_manga_cover():
 def get_chapter_cover(chapter_folder):
     return find_cover(os.path.join(MANGA_DIR, chapter_folder))
 
+def load_likes():
+    if not os.path.exists(LIKES_FILE):
+        return {}
+    with open(LIKES_FILE, 'r') as f:
+        return json.load(f)
+
+def save_likes(likes):
+    with open(LIKES_FILE, 'w') as f:
+        json.dump(likes, f)
+
 @app.route('/')
 def index():
+    likes = load_likes()
     chapters = []
     for key, data in CHAPTERS.items():
         pages = get_pages(data['folder'])
@@ -75,6 +88,7 @@ def index():
             'pages': len(pages),
             'has_cover': chapter_has_cover(data['folder']),
             'cover_file': get_chapter_cover(data['folder']),
+            'likes': likes.get(key, 0),
         })
     return render_template('index.html',
         chapters=chapters,
@@ -82,6 +96,15 @@ def index():
         has_manga_cover=manga_has_cover(),
         manga_cover_file=get_manga_cover(),
     )
+
+@app.route('/like/<chapter_key>', methods=['POST'])
+def like_chapter(chapter_key):
+    if chapter_key not in CHAPTERS:
+        return jsonify({'error': 'not found'}), 404
+    likes = load_likes()
+    likes[chapter_key] = likes.get(chapter_key, 0) + 1
+    save_likes(likes)
+    return jsonify({'likes': likes[chapter_key]})
 
 @app.route('/read/<chapter_key>')
 def reader(chapter_key):

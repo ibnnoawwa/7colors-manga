@@ -50,26 +50,32 @@
         {% if chapters %}
           <div class="chapter-list">
             {% for ch in chapters %}
-            <a href="{{ url_for('reader', chapter_key=ch.key) }}" class="chapter-card">
-              <div class="chapter-cover">
-                {% if ch.has_cover %}
-                  <img src="{{ url_for('manga_image', filepath=ch.key + '/' + ch.cover_file) }}" alt="Cover ch{{ loop.index }}" class="chapter-cover-img">
-                {% else %}
-                  <span class="chapter-num">CH</span>
-                  <span class="chapter-num-big">{{ loop.index }}</span>
-                {% endif %}
-              </div>
-              <div class="chapter-info">
-                <div class="chapter-title">{{ ch.title }}</div>
-                <div class="chapter-subtitle">{{ ch.subtitle }}</div>
-                <div class="chapter-meta">{{ ch.pages }} pages</div>
-              </div>
-              <div class="chapter-arrow">&#8594;</div>
-            </a>
+            <div class="chapter-card-wrap">
+              <a href="{{ url_for('reader', chapter_key=ch.key) }}" class="chapter-card">
+                <div class="chapter-cover">
+                  {% if ch.has_cover %}
+                    <img src="{{ url_for('manga_image', filepath=ch.key + '/' + ch.cover_file) }}" alt="Cover ch{{ loop.index }}" class="chapter-cover-img">
+                  {% else %}
+                    <span class="chapter-num">CH</span>
+                    <span class="chapter-num-big">{{ loop.index }}</span>
+                  {% endif %}
+                </div>
+                <div class="chapter-info">
+                  <div class="chapter-title">{{ ch.title }}</div>
+                  <div class="chapter-subtitle">{{ ch.subtitle }}</div>
+                  <div class="chapter-meta">{{ ch.pages }} pages</div>
+                </div>
+                <div class="chapter-arrow">&#8594;</div>
+              </a>
+              <button class="like-btn" data-chapter="{{ ch.key }}" onclick="likeChapter('{{ ch.key }}', this)">
+                <span class="like-icon">&#10084;</span>
+                <span class="like-count" id="likes-{{ ch.key }}">{{ ch.likes }}</span>
+              </button>
+            </div>
             {% endfor %}
           </div>
         {% else %}
-          <p class="empty-msg">No chapters yet. Add images to the manga/ folder.</p>
+          <p class="empty-msg">No chapters yet.</p>
         {% endif %}
       </section>
     </div>
@@ -78,5 +84,18 @@
   <footer class="site-footer">
     <p>© {{ manga.title }} — All rights reserved</p>
   </footer>
+
+  <script>
+    function likeChapter(key, btn) {
+      btn.disabled = true;
+      fetch('/like/' + key, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('likes-' + key).textContent = data.likes;
+          btn.classList.add('liked');
+        })
+        .catch(() => { btn.disabled = false; });
+    }
+  </script>
 </body>
 </html>
