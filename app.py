@@ -18,8 +18,13 @@ CHAPTERS = {
     },
     'chapter_2': {
         'title': 'The road to Sidi mzal',
-        'subtitle': 'Chapter 2 — The Beginning',
+        'subtitle': 'Chapter 2 — The road to Sidi mzal',
         'folder': 'chapter_2',
+    },
+    'chapter_3': {
+        'title': 'The First Road',
+        'subtitle': 'Chapter 3 - The First Road',
+        'folder': 'chapter_3',
     },
 }
 
