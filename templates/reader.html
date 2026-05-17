@@ -20,19 +20,30 @@
     </div>
   </div>
 
+  <!-- PAGE MODE -->
   <div id="mode-page" class="page-mode">
     <div class="page-viewer">
+
       {% if has_cover %}
       <div class="page-slide active" data-index="0">
-        <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + cover_file) }}" alt="Cover" class="page-img">
+        <div class="page-wrap">
+          <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + cover_file) }}" alt="Cover" class="page-img">
+          <span class="watermark">© Ayoub Oussibla — 7 Colors of Souls</span>
+        </div>
       </div>
       {% endif %}
+
       {% for page in pages %}
       <div class="page-slide {% if not has_cover and loop.first %}active{% endif %}" data-index="{{ loop.index0 + (1 if has_cover else 0) }}">
-        <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + page) }}" alt="Page {{ loop.index }}" class="page-img">
+        <div class="page-wrap">
+          <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + page) }}" alt="Page {{ loop.index }}" class="page-img">
+          <span class="watermark">© Ayoub Oussibla — 7 Colors of Souls</span>
+        </div>
       </div>
       {% endfor %}
+
     </div>
+
     <div class="page-controls">
       <button class="ctrl-btn" id="btn-prev" onclick="changePage(-1)" disabled>&#8592; Prev</button>
       <span class="page-counter"><span id="current-page">1</span> / <span id="total-pages"></span></span>
@@ -43,19 +54,23 @@
     </div>
   </div>
 
+  <!-- SCROLL MODE -->
   <div id="mode-scroll" class="scroll-mode hidden">
     {% if has_cover %}
     <div class="scroll-page">
       <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + cover_file) }}" alt="Cover" class="scroll-img">
+      <span class="watermark">© Ayoub Oussibla — 7 Colors of Souls</span>
     </div>
     {% endif %}
     {% for page in pages %}
     <div class="scroll-page">
       <img src="{{ url_for('manga_image', filepath=chapter_key + '/' + page) }}" alt="Page {{ loop.index }}" class="scroll-img">
+      <span class="watermark">© Ayoub Oussibla — 7 Colors of Souls</span>
     </div>
     {% endfor %}
   </div>
 
+  <!-- CHAPTER NAV -->
   <div class="chapter-nav">
     {% if prev_chapter %}
     <a href="{{ url_for('reader', chapter_key=prev_chapter) }}" class="chap-nav-btn">&#8592; Previous chapter</a>
